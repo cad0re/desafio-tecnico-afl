@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Tarefas - AFL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white p-6">
+    <div class="max-w-3xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-400">Minha Lista</h1>
+            <button onclick="localStorage.clear(); window.location.href='index.html'"
+                class="bg-red-500/20 hover:bg-red-500 text-red-400 px-4 py-2 rounded-lg transition">Sair</button>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-lg mb-8 shadow-lg border border-slate-700">
+            <input type="text" id="taskTitle" placeholder="Título da tarefa"
+                class="w-full p-2 mb-3 rounded bg-slate-700 border-none outline-none text-white">
+            <textarea id="taskDesc" placeholder="Descrição"
+                class="w-full p-2 mb-3 rounded bg-slate-700 border-none outline-none text-white"></textarea>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500">Urgência</label>
+                    <select id="taskUrgency"
+                        class="w-full p-2 rounded bg-slate-700 border-none text-white outline-none">
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500">Status</label>
+                    <select id="taskStatus" class="w-full p-2 rounded bg-slate-700 border-none text-white outline-none">
+                        <option value="pendente">Não Iniciado</option>
+                        <option value="em_andamento">Em Desenvolvimento</option>
+                        <option value="concluida">Concluída</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <input type="date" id="taskStart" class="p-2 rounded bg-slate-700 border-none text-white outline-none">
+                <input type="date" id="taskEnd" class="p-2 rounded bg-slate-700 border-none text-white outline-none">
+            </div>
+
+            <button type="button" onclick="add()"
+                class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded font-bold transition">Adicionar Tarefa</button>
+        </div>
+
+        <div id="lista" class="space-y-3"></div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

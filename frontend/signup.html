@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro - To-Do AFL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+    <div class="bg-slate-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-slate-700">
+        <h1 class="text-3xl font-bold mb-2 text-center text-indigo-400">Cadastro - Desafio AFL</h1>
+        <p class="text-slate-400 text-center mb-6 text-sm">Registre-se para gerenciar suas tarefas</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="text-[10px] uppercase font-bold text-slate-500">E-mail</label>
+                <input type="email" id="email" placeholder="exemplo@gmail.com"
+                    class="w-full p-3 rounded bg-slate-700 border border-slate-600 outline-none focus:border-indigo-500 transition-all">
+            </div>
+            <div>
+                <label class="text-[10px] uppercase font-bold text-slate-500">Senha</label>
+                <input type="password" id="password" placeholder="••••••••"
+                    class="w-full p-3 rounded bg-slate-700 border border-slate-600 outline-none focus:border-indigo-500 transition-all">
+            </div>
+
+            <button type="button" onclick="cadastrar(event)"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded font-bold transition transform active:scale-95 shadow-lg shadow-indigo-500/20">
+                Finalizar Cadastro
+            </button>
+
+            <div class="mt-6 text-center border-t border-slate-700 pt-4">
+                <p class="text-sm text-slate-400">
+                    Já possui uma conta?
+                    <a href="index.html" class="text-indigo-400 hover:underline font-semibold">Voltar para o Login</a>
+                </p>
+            </div>
+        </div>
+
+        <p id="msg" class="mt-4 text-center text-sm font-bold h-5"></p>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

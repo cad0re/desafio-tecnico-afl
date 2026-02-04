@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Desafio AFL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+    <div class="bg-slate-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-slate-700">
+        <h1 class="text-3xl font-bold mb-2 text-center text-blue-400">Login - Desafio AFL</h1>
+        <p class="text-slate-400 text-center mb-6 text-sm">Faça login para gerenciar suas tarefas</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="text-[10px] uppercase font-bold text-slate-500">E-mail</label>
+                <input type="email" id="email" placeholder="seu@email.com"
+                    class="w-full p-3 rounded bg-slate-700 border border-slate-600 outline-none focus:border-blue-500 transition-all">
+            </div>
+
+            <div>
+                <label class="text-[10px] uppercase font-bold text-slate-500">Senha</label>
+                <input type="password" id="password" placeholder="••••••••"
+                    class="w-full p-3 rounded bg-slate-700 border border-slate-600 outline-none focus:border-blue-500 transition-all">
+            </div>
+
+            <button onclick="logar()"
+                class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded font-bold transition transform active:scale-95">
+                Entrar
+            </button>
+
+            <div class="mt-6 text-center border-t border-slate-700 pt-4">
+                <p class="text-sm text-slate-400">
+                    Não tem uma conta?
+                    <a href="signup.html" class="text-blue-400 hover:underline font-semibold">Cadastre-se aqui</a>
+                </p>
+            </div>
+        </div>
+        <p id="msg" class="mt-4 text-center text-sm font-bold h-5"></p>
+    </div>
+
+
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>
