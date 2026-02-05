@@ -25,10 +25,12 @@
                     class="w-full p-3 rounded bg-slate-700 border border-slate-600 outline-none focus:border-blue-500 transition-all">
             </div>
 
-            <button onclick="logar()"
-                class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded font-bold transition transform active:scale-95">
-                Entrar
-            </button>
+            <form onsubmit="event.preventDefault(); return false;">
+                <button onclick="logar()"
+                    class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded font-bold transition transform active:scale-95">
+                    Entrar
+                </button>
+            </form>
 
             <div class="mt-6 text-center border-t border-slate-700 pt-4">
                 <p class="text-sm text-slate-400">

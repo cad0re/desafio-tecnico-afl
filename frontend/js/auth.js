@@ -1,5 +1,51 @@
 
 const API_URL = "http://127.0.0.1:8000";
+
+// adiciona o listener ao botão após o carregamento do DOM
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btn-cadastrar');
+    if (btn) {
+        btn.addEventListener('click', cadastrar);
+    }
+});
+// função para cadastro
+async function cadastrar() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+
+    if (!email || !password) {
+        msg.innerText = "Preencha todos os campos!";
+        return;
+    }
+    try {
+        console.log("Tentando cadastrar...");
+        const response = await fetch(`${API_URL}/signup?email=${email}&password=${password}`, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            msg.className = "mt-4 text-center text-sm font-bold text-indigo-400";
+            msg.innerText = "Sucesso! Redirecionando agora...";
+            
+            console.log("Cadastro OK. Redirecionando em 1 segundo...");
+            
+            // Força o redirecionamento absoluto para evitar erros de pasta
+            setTimeout(() => {
+                window.location.assign("index.html");
+            }, 1000);
+        } else {
+            const data = await response.json();
+            msg.innerText = data.detail || "Erro ao cadastrar.";
+        }
+    } catch (err) {
+        console.error("Erro na conexão:", err);
+        msg.innerText = "Servidor offline!";
+    }
+}                 
+
+
+// função para login 
 async function logar() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -27,43 +73,14 @@ async function logar() {
         msg.innerText = "Servidor offline!";
     }
 }
-async function cadastrar(event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const msg = document.getElementById('msg');
-
-    if (!email || !password) {
-        msg.className = "mt-4 text-center text-sm font-bold text-yellow-500";
-        msg.innerText = "Preencha todos os campos!";
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_URL}/signup?email=${email}&password=${password}`, {
-            method: 'POST'
-        });
-
-        if (response.ok) {
-            msg.className = "mt-4 text-center text-sm font-bold text-indigo-400";
-            msg.innerText = "Usuário criado com sucesso! Redirecionando...";
-
-            // TESTE: Se o redirecionamento falhar com 2s, 
-            // reduza para 500ms ou mude direto para testar a funcionalidade
-            setTimeout(() => {
-                window.location.assign('index.html');
-            }, 1500);
-        } else {
-            const data = await response.json();
-            msg.className = "mt-4 text-center text-sm font-bold text-red-500";
-            msg.innerText = data.detail || "Erro ao cadastrar usuário.";
+// Adiciona listener para tecla Enter para facilitar o envio do formulário
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        if (document.getElementById('btn-cadastrar')) {
+            cadastrar();
+        } else if (document.querySelector('button[onclick="logar()"]')) {
+            logar();
         }
-    } catch (err) {
-        msg.className = "mt-4 text-center text-sm font-bold text-red-500";
-        msg.innerText = "Erro: Servidor não encontrado!";
     }
-}
+});

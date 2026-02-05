@@ -24,10 +24,12 @@
                     class="w-full p-3 rounded bg-slate-700 border border-slate-600 outline-none focus:border-indigo-500 transition-all">
             </div>
 
-            <button type="button" onclick="cadastrar(event)"
-                class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded font-bold transition transform active:scale-95 shadow-lg shadow-indigo-500/20">
-                Finalizar Cadastro
-            </button>
+            <form onsubmit="event.preventDefault(); return false;">
+                <button type="button" id="btn-cadastrar"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded font-bold transition transform active:scale-95 shadow-lg shadow-indigo-500/20">
+                    Finalizar Cadastro
+                </button>
+            </form>
 
             <div class="mt-6 text-center border-t border-slate-700 pt-4">
                 <p class="text-sm text-slate-400">

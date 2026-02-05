@@ -1,5 +1,5 @@
-const API_URL = "http://127.0.0.1:8000";
 const token = localStorage.getItem('token');
+const API_URL = "http://127.0.0.1:8000";
 
 // proteção de rota: só redireciona se não estiver no login e não tiver token
 if (!token && !window.location.href.includes('index.html')) {
@@ -11,7 +11,7 @@ function logout() {
     localStorage.removeItem('token');
     window.location.href = 'index.html';
 }
-
+// função para obter o estilo baseado na urgência
 function getUrgencyStyle(urgencia) {
     if (urgencia === 'alta') return 'border-red-600 bg-red-900/20 text-red-100 ring-1 ring-red-500/50';
     if (urgencia === 'media') return 'border-yellow-500 bg-yellow-900/20 text-yellow-100';
@@ -31,6 +31,7 @@ const statusLabels = {
     'em_andamento': 'Em Desenvolvimento',
     'concluida': 'Concluída'
 };
+
 // função para carregar as tarefas
 async function carregar() {
     try {
@@ -108,7 +109,7 @@ async function atualizarData(id, campo, valor) {
         await fetch(`${API_URL}/tasks/${id}/data?campo=${campo}&valor=${valor}`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` }
-        }); 
+        });
     } catch (err) {
         console.error("Erro ao atualizar data:", err);
     }
@@ -145,13 +146,10 @@ async function add(event) {
     if (inicio && fim && new Date(inicio) > new Date(fim)) {
         alert("Erro: A data de início não pode ser maior que o prazo final!");
         return; // interrompe a função aqui mesmo
-    }
-
-    if (!titulo) {
+    } if (!titulo) {
         alert("O título é obrigatório!");
         return;
-    }
-// construção dos parâmetros da query
+    }// prepara os parâmetros 
     const params = new URLSearchParams({
         titulo: titulo,
         descricao: descricao || "",
@@ -160,7 +158,7 @@ async function add(event) {
         data_inicio: inicio || "",
         data_limite: fim || ""
     });
-
+    // envia a requisição
     try {
         const response = await fetch(`${API_URL}/tasks?${params.toString()}`, {
             method: 'POST',
@@ -182,17 +180,41 @@ async function add(event) {
         console.error("Erro de conexão:", err);
     }
 }
-// função para deletar tarefa
-async function deletar(id) {
-    if (!confirm("Deseja mesmo excluir esta tarefa?")) return;
+    // função pra deletar tarefa
+    async function deletar(id) {
+        if (!confirm("Deseja mesmo excluir esta tarefa?")) return;
 
-    await fetch(`${API_URL}/tasks/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    carregar();
-}
+        await fetch(`${API_URL}/tasks/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        carregar();
+    }
 
-if (document.getElementById('lista')) {
-    carregar();
-}
+    if (document.getElementById('lista')) {
+        carregar();
+    }
+        // função pra deletar todas as tarefas
+    async function limparTudo() {
+        const lista = document.getElementById('lista');
+
+        if (!lista || lista.children.length === 0) {
+            alert("Não existem tarefas no dashboard para serem excluídas.");
+            return;
+        }
+
+        if (confirm("⚠️ Você tem certeza que deseja excluir TODAS as suas tarefas?")) {
+            try {
+                const response = await fetch(`${API_URL}/tasks/clear`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    carregar(); // Ajustado de carregarTarefas para carregar
+                }
+            } catch (err) {
+                console.error("Erro ao conectar:", err);
+            }
+        }
+    }

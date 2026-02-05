@@ -8,25 +8,26 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime
 
-# Configurações de Segurança
+# configurações de Segurança
 SECRET_KEY = "sua_chave_secreta_aqui" 
 ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-# Banco de Dados
+# configuração do banco de dados
 SQLALCHEMY_DATABASE_URL = "sqlite:///./todolist.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Modelos
+# tabela de usuários
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
 
+# tabela de tarefas
 class Todo(Base):
     __tablename__ = "todos"
     id = Column(Integer, primary_key=True, index=True)
@@ -39,6 +40,7 @@ class Todo(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
     data_criacao = Column(String, default=lambda: datetime.now().strftime("%d/%m/%Y %H:%M"))
 
+# cria as tabelas no banco de dados
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
@@ -47,8 +49,9 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
-)
+)                 
 
+# Dependência para obter a sessão do banco de dados       
 def get_db():
     db = SessionLocal()
     try:
@@ -56,7 +59,7 @@ def get_db():
     finally:
         db.close()
 
-# --- AUTENTICAÇÃO ---
+#verificação sobre o usuáario no cadastro e login
 
 @app.post("/signup")
 def signup(email: str, password: str, db: Session = Depends(get_db)):
@@ -79,6 +82,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     token = jwt.encode({"sub": user.email}, SECRET_KEY, algorithm=ALGORITHM)
     return {"access_token": token, "token_type": "bearer"}
 
+# Dependência para obter o usuário atual a partir do token
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -91,12 +95,18 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None: raise HTTPException(status_code=401, detail="Usuário não encontrado")
     return user
 
-# --- TAREFAS ---
-
+# Rotas para gerenciamento de tarefas
 @app.get("/tasks")
 def list_tasks(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return db.query(Todo).filter(Todo.owner_id == current_user.id).all()
 
+@app.delete("/tasks/clear")
+async def clear_tasks(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    db.query(Todo).filter(Todo.owner_id == current_user.id).delete()
+    db.commit()
+    return {"detail": "Todas as tarefas foram removidas"}
+#
+# Validação de datas
 @app.post("/tasks")
 def create_task(
     titulo: str, 
@@ -108,8 +118,7 @@ def create_task(
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user)
 ):
-    # --- NOVA VALIDAÇÃO DE DATAS NO SERVIDOR ---
-    # Como as datas vêm como String (AAAA-MM-DD), o Python consegue compará-las diretamente
+    
     if data_inicio and data_limite:
         if data_inicio > data_limite:
             raise HTTPException(
@@ -131,6 +140,7 @@ def create_task(
     db.commit()
     return {"message": "Tarefa criada!"}
 
+# atualização de status das tarefas
 @app.put("/tasks/{task_id}/status")
 def update_status(task_id: int, novo_status: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     task = db.query(Todo).filter(Todo.id == task_id, Todo.owner_id == current_user.id).first()
@@ -139,6 +149,7 @@ def update_status(task_id: int, novo_status: str, db: Session = Depends(get_db),
     db.commit()
     return {"message": "Status atualizado!"}
 
+# atualização de datas das tarefas
 @app.put("/tasks/{task_id}/data")
 def update_task_date(task_id: int, campo: str, valor: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     task = db.query(Todo).filter(Todo.id == task_id, Todo.owner_id == current_user.id).first()
@@ -150,6 +161,7 @@ def update_task_date(task_id: int, campo: str, valor: str, db: Session = Depends
     db.commit()
     return {"message": "Data atualizada!"}
 
+# deletar tarefas singularmente
 @app.delete("/tasks/{task_id}")
 def delete_task(task_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     task = db.query(Todo).filter(Todo.id == task_id, Todo.owner_id == current_user.id).first()
